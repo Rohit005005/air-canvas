@@ -1,15 +1,11 @@
-from flask import Flask, Response, render_template, url_for
+from flask import Flask, Response, render_template
 from flask_cors import CORS
 import cv2
 import numpy as np
 import mediapipe as mp
 from collections import deque
-import os
 
-# Initialize Flask app with correct template folder path
-template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'templates'))
-static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'static'))
-app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
+app = Flask(__name__)
 CORS(app)
 
 # Initialize color points for drawing
@@ -93,6 +89,7 @@ def generate_frames():
                     colorIndex = 2  # Red
                 elif 625 <= fore_finger[0] <= 765:
                     colorIndex = 3  # Yellow
+
             else:
                 if colorIndex == 0:
                     bpoints[blue_index].appendleft(fore_finger)
@@ -127,10 +124,4 @@ def video_feed():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == "__main__":
-    # Get the absolute path of the current file
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    # Print the paths for debugging
-    print(f"Template directory: {template_dir}")
-    print(f"Static directory: {static_dir}")
-    print(f"Current directory: {current_dir}")
     app.run(debug=True)
